@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'routing.apps.FuelConfig',
+    'rest_framework_simplejwt',
+    'routing.apps.RoutingConfig',
     'fuel.apps.FuelConfig'
 ]
 
