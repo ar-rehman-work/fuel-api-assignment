@@ -11,7 +11,6 @@ def geocode_address(address_str):
     using the dedicated OpenStreetMap Nominatim search API.
     """
 
-
     encoded_address = urllib.parse.quote(address_str)    
     url = f"https://nominatim.openstreetmap.org/search?q={encoded_address}&format=json&limit=1"
     headers = {'User-Agent': 'FuelAlgorithmicSystem/3.0'}
