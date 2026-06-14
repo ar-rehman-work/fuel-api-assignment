@@ -3,14 +3,17 @@ import math
 from decimal import Decimal
 from fuel.models import FuelStation
 from fuel.services.ai import ai_spatial_assistant
+import urllib.parse
 
 def geocode_address(address_str):
     """
     Converts a plain text location string into latitude and longitude coordinates
-    using the free OpenStreetMap Nominatim API.
+    using the dedicated OpenStreetMap Nominatim search API.
     """
 
-    url = f"https://openstreetmap.org{address_str}&format=json&limit=1"
+
+    encoded_address = urllib.parse.quote(address_str)    
+    url = f"https://nominatim.openstreetmap.org/search?q={encoded_address}&format=json&limit=1"
     headers = {'User-Agent': 'FuelAlgorithmicSystem/3.0'}
 
     try:
@@ -18,8 +21,8 @@ def geocode_address(address_str):
 
         if response and len(response) > 0:
             return float(response[0]['lat']), float(response[0]['lon'])
-    except Exception:
-        raise ValueError(f"Geocoding network lookup failed for location: {address_str}")
+    except Exception as e:
+        raise ValueError(f"Geocoding network lookup failed for location: {address_str} - {str(e)}")
 
     raise ValueError(f"Could not find coordinates for location entry: {address_str}")
 
