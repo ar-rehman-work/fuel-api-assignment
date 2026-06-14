@@ -57,3 +57,6 @@ node_modules/
 
 # Jupyter
 .ipynb_checkpoints/
+
+postman
+.postman
