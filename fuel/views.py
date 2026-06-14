@@ -50,6 +50,8 @@ class FuelRouteOptimizerView(APIView):
                 "summary": {
                     "start": start_location,
                     "finish": finish_location,
+                    "start_coords": start_coords,
+                    "finish_coords": finish_coords,
                     "total_distance_miles": round(total_distance, 2),
                     "total_fuel_cost_usd": total_fuel_cost,
                 },

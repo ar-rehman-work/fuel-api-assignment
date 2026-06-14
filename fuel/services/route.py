@@ -43,10 +43,10 @@ def get_osrm_route(start_coords, finish_coords, route_type='car'):
         response = requests.get(url, timeout=10).json()
     except Exception as e:
         raise Exception(f"OSRM routing network connection failed: {str(e)}")
-        
+
     if response.get('code') != 'Ok':
         raise Exception("Failed to generate route geometry via OSRM map servers.")
-        
+
     route = response['routes'][0]
     distance_miles = route['distance'] * 0.000621371
     route_geometry = route['geometry']
@@ -107,14 +107,14 @@ def optimize_fuel_route(route_geometry, total_distance):
             if d < min_dist:
                 min_dist = d
                 closest_idx = idx
-                
+
         milemarker = route_milemarkers[closest_idx]
-        
+
         stations_with_markers.append({
             'station': station,
             'milemarker': milemarker
         })
-        
+
     stations_with_markers.sort(key=lambda x: x['milemarker'])
 
     max_range = 500.0
@@ -122,43 +122,45 @@ def optimize_fuel_route(route_geometry, total_distance):
     current_mile = 0.0
     total_cost = Decimal('0.00')
     selected_stops = []
-    
+
     stations_with_markers.append({'station': None, 'milemarker': total_distance})
-    
+
     i = 0
     num_elements = len(stations_with_markers)
-    
+
     while current_mile < total_distance:
         reachable = []
+
         for j in range(i, num_elements):
             dist_to_node = stations_with_markers[j]['milemarker'] - current_mile
+
             if 0 < dist_to_node <= max_range:
                 reachable.append((j, stations_with_markers[j]))
             elif dist_to_node > max_range:
                 break
-                
+
         if not reachable:
             raise ValueError("The distance gap between available corridor fuel stations exceeds the 500-mile vehicle range.")
-            
-        if reachable[-1]['station'] is None:
+
+        if reachable[-1][1]['station'] is None:
             if not selected_stops:
                 miles_driven = total_distance - current_mile
                 gallons_consumed = Decimal(str(miles_driven / mpg))
                 total_cost = gallons_consumed * Decimal('3.50')
             break
-            
+
         best_idx, best_node = min(
             reachable, 
-            key=lambda x: x['station']['retail_price'] if x['station'] else Decimal('999.99')
+            key=lambda x: x[1]['station']['retail_price'] if x[1]['station'] else Decimal('999.99')
         )
         station_obj = best_node['station']
         miles_driven = best_node['milemarker'] - current_mile
-        
+
         gallons_consumed = Decimal(str(miles_driven / mpg))
         cost = gallons_consumed * station_obj['retail_price']
-        
+
         total_cost += cost
-        
+
         selected_stops.append({
             'opis_id': station_obj['opis_id'],
             'name': station_obj['name'],
@@ -168,7 +170,7 @@ def optimize_fuel_route(route_geometry, total_distance):
             'latitude': station_obj['latitude'],
             'longitude': station_obj['longitude']
         })
-        
+
         current_mile = best_node['milemarker']
         i = best_idx + 1
 

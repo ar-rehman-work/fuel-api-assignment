@@ -48,6 +48,8 @@ class RouteInputSerializer(serializers.Serializer):
 class RouteSummarySerializer(serializers.Serializer):
     start = serializers.CharField()
     finish = serializers.CharField()
+    start_coords = serializers.JSONField()
+    finish_coords = serializers.JSONField()
     total_distance_miles = serializers.FloatField()
     total_fuel_cost_usd = serializers.FloatField()
     fuel_efficiency = serializers.CharField(default="10 MPG")
