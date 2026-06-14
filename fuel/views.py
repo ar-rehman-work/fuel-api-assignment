@@ -38,11 +38,12 @@ class FuelRouteOptimizerView(APIView):
             
         start_location = input_serializer.validated_data['start']
         finish_location = input_serializer.validated_data['finish']
+        route_type = input_serializer.validated_data.get('route_type', 'car')
         
         try:
             start_coords = geocode_address(start_location)
             finish_coords = geocode_address(finish_location)
-            total_distance, route_geometry = get_osrm_route(start_coords, finish_coords)
+            total_distance, route_geometry = get_osrm_route(start_coords, finish_coords, route_type)
             optimal_stops, total_fuel_cost = optimize_fuel_route(route_geometry, total_distance)
             
             raw_response_data = {

@@ -34,6 +34,16 @@ class RouteInputSerializer(serializers.Serializer):
         max_length=255, 
         help_text="Final location in US (e.g., 'Los Angeles, CA' or '456 Broadway, Miami, FL')."
     )
+    route_type = serializers.ChoiceField(
+        choices=[
+            ('car', 'Car'), 
+            ('bike', 'Bike'), 
+            ('foot', 'Pedestrian')
+        ], 
+        default='car', 
+        required=False,
+        help_text="Mode of transit selection menu option."
+    )
 
 class RouteSummarySerializer(serializers.Serializer):
     start = serializers.CharField()

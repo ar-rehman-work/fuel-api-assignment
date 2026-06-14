@@ -23,7 +23,7 @@ def geocode_address(address_str):
 
     raise ValueError(f"Could not find coordinates for location entry: {address_str}")
 
-def get_osrm_route(start_coords, finish_coords):
+def get_osrm_route(start_coords, finish_coords, route_type='car'):
     """
     Fetches the full driving geometry and total distance from the free OSRM API.
     Note: OSRM strictly expects coordinates in the format: longitude,latitude.
@@ -31,8 +31,11 @@ def get_osrm_route(start_coords, finish_coords):
 
     start_lat, start_lon = start_coords
     finish_lat, finish_lon = finish_coords
-    
-    url = f"http://project-osrm.org{start_lon},{start_lat};{finish_lon},{finish_lat}?overview=full&geometries=geojson"
+
+    if route_type not in ['car', 'bike', 'foot']:
+        route_type = 'car'
+
+    url = f"https://routing.openstreetmap.de/routed-{route_type}/route/v1/driving/{start_lon},{start_lat};{finish_lon},{finish_lat}?overview=full&geometries=geojson"
 
     try:
         response = requests.get(url, timeout=10).json()
